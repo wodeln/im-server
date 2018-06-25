@@ -11,6 +11,7 @@ var userSchema = new Schema({
     user_sex:String,
     user_province:String,
     user_city:String,
-    user_id:Number
+    user_id:Number,
+    user_stata_message:String
 });
 module.exports = userSchema;

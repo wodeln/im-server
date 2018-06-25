@@ -3,14 +3,17 @@ let im =require('./routers/im.js');
 let path = require('path');
 let mongoose = require('./mongo/mongoose.js');
 let tokenUtil = require('./util/token');
+let bodyParser = require('body-parser');
 let db = mongoose();
 let app=new express();
 
 app.use('/public',express.static(path.join(__dirname, 'public')));
-
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(function (request,response,next) {
     let token = request.get("Authorization");
-    if(!tokenUtil.checkToken(token)){
+    let url = request.url;
+    let pathArray = url.split("/");
+    if(!tokenUtil.checkToken(token) && pathArray[pathArray.length-1]!='doLogin'){
         response.sendStatus(401);
     }else {
         next();
