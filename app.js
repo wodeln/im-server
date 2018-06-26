@@ -14,8 +14,10 @@ app.use(function (request,response,next) {
     let url = request.url;
 
     let pathArray = url.split("/");
-    if(!tokenUtil.checkToken(token) && pathArray[pathArray.length-1]!='doLogin'){
-    if(typeof token == 'undefined' || !tokenUtil.checkToken(token)){
+    if(
+        (typeof token == 'undefined' || !tokenUtil.checkToken(token))
+        && pathArray[pathArray.length-1]!='doLogin'
+    ){
         response.sendStatus(401);
     }else {
         next();
