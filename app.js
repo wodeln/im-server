@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(function (request,response,next) {
     let token = request.get("Authorization");
     let url = request.url;
+
     let pathArray = url.split("/");
     if(!tokenUtil.checkToken(token) && pathArray[pathArray.length-1]!='doLogin'){
         response.sendStatus(401);
