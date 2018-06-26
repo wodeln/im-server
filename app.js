@@ -10,7 +10,7 @@ app.use('/public',express.static(path.join(__dirname, 'public')));
 
 app.use(function (request,response,next) {
     let token = request.get("Authorization");
-    if(!tokenUtil.checkToken(token)){
+    if(typeof token == 'undefined' || !tokenUtil.checkToken(token)){
         response.sendStatus(401);
     }else {
         next();
