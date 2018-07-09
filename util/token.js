@@ -17,12 +17,12 @@ var token={
         var signature=hash.digest('base64');
 
 
-        return  base64Str+"."+signature;
+        return  `${obj.sid}.${base64Str}.${signature}`;
     },
     decodeToken:function(token){
 
         var decArr=token.split(".");
-        if(decArr.length<2){
+        if(decArr.length<3){
             //token不合法
             return false;
         }
@@ -30,7 +30,7 @@ var token={
         var payload={};
         //将payload json字符串 解析为对象
         try{
-            payload=JSON.parse(Buffer.from(decArr[0],"base64").toString("utf8"));
+            payload=JSON.parse(Buffer.from(decArr[1],"base64").toString("utf8"));
         }catch(e){
             return false;
         }
@@ -38,30 +38,32 @@ var token={
         //检验签名
         var secret="hel.h-five.com";
         var hash=crypto.createHmac('sha256',secret);
-        hash.update(decArr[0]);
+        hash.update(decArr[1]);
         var checkSignature=hash.digest('base64');
-
         return {
             payload:payload,
-            signature:decArr[1],
-            checkSignature:checkSignature
+            signature:decArr[2],
+            checkSignature:checkSignature,
+            sid:decArr[0]
         }
     },
     checkToken:function(token){
         var resDecode=this.decodeToken(token);
-        if(!resDecode){
 
+        if(!resDecode){
+            return false;
+        }
+        //是否过期
+        var expState=(parseInt(Date.now()/1000)-parseInt(resDecode.payload.created))>parseInt(resDecode.payload.exp)?false:true;
+        if(!resDecode.signature===resDecode.checkSignature|| !expState) {
             return false;
         }
 
-        //是否过期
-        var expState=(parseInt(Date.now()/1000)-parseInt(resDecode.payload.created))>parseInt(resDecode.payload.exp)?false:true;
-        if(resDecode.signature===resDecode.checkSignature&&expState){
-
-            return true;
+        let result = {
+            sessionId: resDecode.sid,
+            sessionUser:resDecode.payload.data.sessionUser
         }
-
-        return false;
+        return result;
     }
 
 }
