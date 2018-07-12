@@ -24,6 +24,7 @@ app.use(session({
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use(function (request, response, next) {
 
     let token = request.get("Authorization");
@@ -31,7 +32,7 @@ app.use(function (request, response, next) {
     let pathArray = url.split("/");
     // console.log(pathArray);
     if(pathArray[1]!='socket.io'){
-        if (pathArray[pathArray.length - 1] == 'doLogin' || pathArray[pathArray.length - 1] == 'doLogin') {
+        if (pathArray[pathArray.length - 1] == 'doLogin' || pathArray[pathArray.length - 1] == 'addUser') {
             next();
         } else {
             let tokenResult = tokenUtil.checkToken(token);
