@@ -209,7 +209,8 @@ router.post('/doLogin', function (req, res) {
                             user_age: doc.user_age,
                             user_id: doc.user_id,
                             user_avatar: doc.user_avatar,
-                            user_stata_message: doc.user_stata_message
+                            user_stata_message: doc.user_stata_message,
+                            user_nickname: doc.user_nickname
                         },
                         token: token
                     }
