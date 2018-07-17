@@ -52,10 +52,34 @@ app.use(function (request, response, next) {
 app.use('/im/v1', im);
 app.use('/v1', im);
 
+
+let onlineUser= new Map();
 io.on('connection', function(socket){
-    console.log(socket.id);
-    console.log('a user connected');
+
+    var query = socket.request._query;
+
+    let user={
+        user_id:query.user_id,
+        socket_id:socket.id,
+        user_avatar:query.user_avatar,
+        user_nickname:query.user_nickname
+    }
+
+    onlineUser.set(query.user_id,user);
+
+    socket.on('userMessage',function (msg) {
+        console.log(msg);
+    });
+
+    socket.on('disconnect', (reason) => {
+        onlineUser.forEach(function (value, key) {
+            if(value.socket_id==socket.id){
+                onlineUser.delete(key);
+            }
+        })
+    });
 });
+
 
 server.listen(3001, function () {
     console.log("server started")
